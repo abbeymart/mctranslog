@@ -1,27 +1,8 @@
 import unittest
 import mctranslog
-import db_postgres
+import mcdb
 
-type
-    Database = ref object
-        db: DbConn
-
-    SecureType = object
-        secureAccess: bool
-        secureCert: string
-        secureKey: string
-    OptionType = object
-        fileName: string
-        hostName: string
-        hostUrl: string
-        userName: string
-        password: string
-        dbName: string
-        port: uint
-        dbType: string
-        poolSize: uint
-        secureOption: SecureType
-
+# test data sets
 var defaultSecureOption = SecureType(secureAccess: false)
 
 var defaultOptions = OptionType(fileNaMe: "testdb.db", hostName: "localhost",
@@ -31,12 +12,8 @@ var defaultOptions = OptionType(fileNaMe: "testdb.db", hostName: "localhost",
                                 dbType: "postgres", poolSize: 20,
                                 secureOption: defaultSecureOption )
 
-# database constructor 
-proc newDatabase*(options: OptionType = defaultOptions): Database =
-    new result
-    result.db = open("localhost", "user", "password", "dbname")
-
-var auditDb = newDatabase()
+# db connection / instance
+var dbConnect = newDatabase(defaultOptions)
 
 test "return correct instance":
     echo "testing"
