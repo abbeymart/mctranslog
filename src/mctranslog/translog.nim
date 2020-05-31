@@ -30,7 +30,7 @@ type
         maxQueryLimit: Positive
         mcMessages*: Table[string, string]
  
-# default contructor
+# contructor
 proc newLog*(auditDb: Database; options: Table[string, ValueType]): LogParam =
     var defaultMessageTable = initTable[string, string]
     new result
@@ -49,7 +49,7 @@ proc createLog*(log: LogParam; coll: string; collParams: JsonNode; userId: strin
             actionDate = now().utc
 
         # store action record
-        log.auditDb.db.exec(sql"INSERT INTO audits (collName, collValues, actionType, actionBy, actionDate ) VALUES (?, ?, ?, ?, ?);",
+        log.auditDb.db.exec(sql("INSERT INTO" & log.auditColl & "(collName, collValues, actionType, actionBy, actionDate ) VALUES (?, ?, ?, ?, ?);"),
         collName, collValues, actionType, actionBy, actionDate)
         
         # send response
@@ -69,7 +69,7 @@ proc updateLog*(log: LogParam; coll: string; collParams: JsonNode; userId: strin
             actionDate = now().utc
 
         # store action record
-        log.auditDb.db.exec(sql"INSERT INTO audits (collName, collValues, actionType, actionBy, actionDate ) VALUES (?, ?, ?, ?, ?);",
+        log.auditDb.db.exec(sql("INSERT INTO" & log.auditColl & "(collName, collValues, actionType, actionBy, actionDate ) VALUES (?, ?, ?, ?, ?);"),
         collName, collValues, actionType, actionBy, actionDate)
         
         # send response
@@ -89,7 +89,7 @@ proc readLog*(log: LogParam; coll: string; collParams: JsonNode; userId: string 
             actionDate = now().utc
 
         # store action record
-        log.auditDb.db.exec(sql"INSERT INTO audits (collName, collValues, actionType, actionBy, actionDate ) VALUES (?, ?, ?, ?, ?);",
+        log.auditDb.db.exec(sql("INSERT INTO" & log.auditColl & "(collName, collValues, actionType, actionBy, actionDate ) VALUES (?, ?, ?, ?, ?);"),
         collName, collValues, actionType, actionBy, actionDate)
         
         # send response
@@ -109,7 +109,7 @@ proc deleteLog*(log: LogParam; coll: string; collParams: JsonNode; userId: strin
             actionDate = now().utc
 
         # store action record
-        log.auditDb.db.exec(sql"INSERT INTO audits (collName, collValues, actionType, actionBy, actionDate ) VALUES (?, ?, ?, ?, ?);",
+        log.auditDb.db.exec(sql("INSERT INTO" & log.auditColl & "(collName, collValues, actionType, actionBy, actionDate ) VALUES (?, ?, ?, ?, ?);"),
         collName, collValues, actionType, actionBy, actionDate)
         
         # send response
@@ -129,7 +129,7 @@ proc loginLog*(log: LogParam; coll: string; collParams: JsonNode; userId: string
             actionDate = now().utc
 
         # store action record
-        log.auditDb.db.exec(sql"INSERT INTO audits (collName, collValues, actionType, actionBy, actionDate ) VALUES (?, ?, ?, ?, ?);",
+        log.auditDb.db.exec(sql("INSERT INTO" & log.auditColl & "(collName, collValues, actionType, actionBy, actionDate ) VALUES (?, ?, ?, ?, ?);"),
         collName, collValues, actionType, actionBy, actionDate)
         
         # send response
@@ -149,7 +149,7 @@ proc logoutLog*(log: LogParam; coll: string; collParams: JsonNode; userId: strin
             actionDate = now().utc
 
         # store action record
-        log.auditDb.db.exec(sql"INSERT INTO audits (collName, collValues, actionType, actionBy, actionDate ) VALUES (?, ?, ?, ?, ?);",
+        log.auditDb.db.exec(sql("INSERT INTO" & log.auditColl & "(collName, collValues, actionType, actionBy, actionDate ) VALUES (?, ?, ?, ?, ?);"),
         collName, collValues, actionType, actionBy, actionDate)
         
         # send response
@@ -169,7 +169,7 @@ proc auditLog*(log: LogParam; coll: string; collParams: JsonNode; userId: string
             actionDate = now().utc
 
         # store action record
-        log.auditDb.db.exec(sql"INSERT INTO audits (collName, collValues, actionType, actionBy, actionDate ) VALUES (?, ?, ?, ?, ?);",
+        log.auditDb.db.exec(sql("INSERT INTO" & log.auditColl & "(collName, collValues, actionType, actionBy, actionDate ) VALUES (?, ?, ?, ?, ?);"),
         collName, collValues, actionType, actionBy, actionDate)
         
         # send response
@@ -177,7 +177,3 @@ proc auditLog*(log: LogParam; coll: string; collParams: JsonNode; userId: string
     
     except:
         return getResMessage("insertError", ResponseMessage(value: nil, message: getCurrentExceptionMsg()))
-
-
-
-
