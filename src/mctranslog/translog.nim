@@ -24,13 +24,7 @@ type
          
     ValueType = int | string | float | bool | Positive | Natural | JsonNode | BiggestInt | BiggestFloat | Table | seq | SqlQuery | Database
 
-    # UserParam = object
-    #     name: string
-    #     age: Natural
-    
     LogParam = ref object
-        # actionParams*: Table[string, ValueType]
-        # queryParams*: Table[string, Table[string, ValueType]]
         auditDb: Database
         auditColl*: string
         maxQueryLimit: Positive
@@ -46,10 +40,7 @@ proc newLog*(auditDb: Database; options: Table[string, ValueType]): LogParam =
 
 proc createLog*(log: LogParam; coll: string; collParams: JsonNode; userId: string ): ResponseMessage =
     try:
-        echo "success"
-        # validate params, optional
-
-        # log-params
+        # log-params/values
         let
             collName = coll
             collValues = collParams
@@ -58,7 +49,7 @@ proc createLog*(log: LogParam; coll: string; collParams: JsonNode; userId: strin
             actionDate = now().utc
 
         # store action record
-        log.auditDb.db.exec(sql"INSERT INTO audits VALUES (?, ?, ?, ?, ?);",
+        log.auditDb.db.exec(sql"INSERT INTO audits (collName, collValues, actionType, actionBy, actionDate ) VALUES (?, ?, ?, ?, ?);",
         collName, collValues, actionType, actionBy, actionDate)
         
         # send response
@@ -67,4 +58,126 @@ proc createLog*(log: LogParam; coll: string; collParams: JsonNode; userId: strin
     except:
         return getResMessage("insertError", ResponseMessage(value: nil, message: getCurrentExceptionMsg()))
 
+proc updateLog*(log: LogParam; coll: string; collParams: JsonNode; userId: string ): ResponseMessage =
+    try:
+        # log-params/values
+        let
+            collName = coll
+            collValues = collParams
+            actionType = "create"
+            actionBy = userId
+            actionDate = now().utc
+
+        # store action record
+        log.auditDb.db.exec(sql"INSERT INTO audits (collName, collValues, actionType, actionBy, actionDate ) VALUES (?, ?, ?, ?, ?);",
+        collName, collValues, actionType, actionBy, actionDate)
+        
+        # send response
+        return getResMessage("success", ResponseMessage(value: collParams, message: getCurrentExceptionMsg()))
     
+    except:
+        return getResMessage("insertError", ResponseMessage(value: nil, message: getCurrentExceptionMsg()))
+
+proc readLog*(log: LogParam; coll: string; collParams: JsonNode; userId: string ): ResponseMessage =
+    try:
+        # log-params/values
+        let
+            collName = coll
+            collValues = collParams
+            actionType = "create"
+            actionBy = userId
+            actionDate = now().utc
+
+        # store action record
+        log.auditDb.db.exec(sql"INSERT INTO audits (collName, collValues, actionType, actionBy, actionDate ) VALUES (?, ?, ?, ?, ?);",
+        collName, collValues, actionType, actionBy, actionDate)
+        
+        # send response
+        return getResMessage("success", ResponseMessage(value: collParams, message: getCurrentExceptionMsg()))
+    
+    except:
+        return getResMessage("insertError", ResponseMessage(value: nil, message: getCurrentExceptionMsg()))
+
+proc deleteLog*(log: LogParam; coll: string; collParams: JsonNode; userId: string ): ResponseMessage =
+    try:
+        # log-params/values
+        let
+            collName = coll
+            collValues = collParams
+            actionType = "create"
+            actionBy = userId
+            actionDate = now().utc
+
+        # store action record
+        log.auditDb.db.exec(sql"INSERT INTO audits (collName, collValues, actionType, actionBy, actionDate ) VALUES (?, ?, ?, ?, ?);",
+        collName, collValues, actionType, actionBy, actionDate)
+        
+        # send response
+        return getResMessage("success", ResponseMessage(value: collParams, message: getCurrentExceptionMsg()))
+    
+    except:
+        return getResMessage("insertError", ResponseMessage(value: nil, message: getCurrentExceptionMsg()))
+
+proc loginLog*(log: LogParam; coll: string; collParams: JsonNode; userId: string ): ResponseMessage =
+    try:
+        # log-params/values
+        let
+            collName = coll
+            collValues = collParams
+            actionType = "create"
+            actionBy = userId
+            actionDate = now().utc
+
+        # store action record
+        log.auditDb.db.exec(sql"INSERT INTO audits (collName, collValues, actionType, actionBy, actionDate ) VALUES (?, ?, ?, ?, ?);",
+        collName, collValues, actionType, actionBy, actionDate)
+        
+        # send response
+        return getResMessage("success", ResponseMessage(value: collParams, message: getCurrentExceptionMsg()))
+    
+    except:
+        return getResMessage("insertError", ResponseMessage(value: nil, message: getCurrentExceptionMsg()))
+
+proc logoutLog*(log: LogParam; coll: string; collParams: JsonNode; userId: string ): ResponseMessage =
+    try:
+        # log-params/values
+        let
+            collName = coll
+            collValues = collParams
+            actionType = "create"
+            actionBy = userId
+            actionDate = now().utc
+
+        # store action record
+        log.auditDb.db.exec(sql"INSERT INTO audits (collName, collValues, actionType, actionBy, actionDate ) VALUES (?, ?, ?, ?, ?);",
+        collName, collValues, actionType, actionBy, actionDate)
+        
+        # send response
+        return getResMessage("success", ResponseMessage(value: collParams, message: getCurrentExceptionMsg()))
+    
+    except:
+        return getResMessage("insertError", ResponseMessage(value: nil, message: getCurrentExceptionMsg()))
+
+proc auditLog*(log: LogParam; coll: string; collParams: JsonNode; userId: string ): ResponseMessage =
+    try:
+        # log-params/values
+        let
+            collName = coll
+            collValues = collParams
+            actionType = "create"
+            actionBy = userId
+            actionDate = now().utc
+
+        # store action record
+        log.auditDb.db.exec(sql"INSERT INTO audits (collName, collValues, actionType, actionBy, actionDate ) VALUES (?, ?, ?, ?, ?);",
+        collName, collValues, actionType, actionBy, actionDate)
+        
+        # send response
+        return getResMessage("success", ResponseMessage(value: collParams, message: getCurrentExceptionMsg()))
+    
+    except:
+        return getResMessage("insertError", ResponseMessage(value: nil, message: getCurrentExceptionMsg()))
+
+
+
+
