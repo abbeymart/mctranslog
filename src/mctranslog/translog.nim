@@ -14,18 +14,19 @@
 ## 
 
 # types
-import db_postgres, json, tables
+import db_postgres, json, tables, times
+import mcresponse
 
 # Define types
 type
     Database = ref object
         db: DbConn
          
-    ValueType = int | string | float | bool | JsonNode | BiggestInt | BiggestFloat | Table | seq | SqlQuery | Database
+    ValueType = int | string | float | bool | Positive | Natural | JsonNode | BiggestInt | BiggestFloat | Table | seq | SqlQuery | Database
 
-    UserParam = object
-        name: string
-        age: Natural
+    # UserParam = object
+    #     name: string
+    #     age: Natural
     
     LogParam = ref object
         # actionParams*: Table[string, ValueType]
@@ -37,11 +38,33 @@ type
  
 # default contructor
 proc newLog*(auditDb: Database; options: Table[string, ValueType]): LogParam =
-    var defaultTable = initTable[string, ValueType]
+    var defaultMessageTable = initTable[string, string]
     new result
     result.auditDb = auditDb
     result.auditColl = options.getOrDefault("auditColl", "audits")
-    result.mcMessages = options.getOrDefault("messages", defaultTable)
+    result.mcMessages = options.getOrDefault("messages", defaultMessageTable)
 
-proc createLog*(log: LogParam, collParams: Table[string, ValueType], userId: string ) =
-    echo "create log"
+proc createLog*(log: LogParam; coll: string; collParams: JsonNode; userId: string ): ResponseMessage =
+    try:
+        echo "success"
+        # validate params, optional
+
+        # log-params
+        let
+            collName = coll
+            collValues = collParams
+            actionType = "create"
+            actionBy = userId
+            actionDate = now().utc
+
+        # store action record
+        log.auditDb.db.exec(sql"INSERT INTO audits VALUES (?, ?, ?, ?, ?);",
+        collName, collValues, actionType, actionBy, actionDate)
+        
+        # send response
+        return getResMessage("success", ResponseMessage(value: collParams, message: getCurrentExceptionMsg()))
+    
+    except:
+        return getResMessage("insertError", ResponseMessage(value: nil, message: getCurrentExceptionMsg()))
+
+    
