@@ -49,8 +49,9 @@ proc createLog*(log: LogParam; coll: string; collParams: JsonNode; userId: strin
             actionDate = now().utc
 
         # store action record
-        log.auditDb.db.exec(sql("INSERT INTO" & log.auditColl & "(collName, collValues, actionType, actionBy, actionDate ) VALUES (?, ?, ?, ?, ?);"),
-        collName, collValues, actionType, actionBy, actionDate)
+        var taskQuery = sql("INSERT INTO" & log.auditColl & "(collName, collValues, actionType, actionBy, actionDate ) VALUES (?, ?, ?, ?, ?);")
+
+        log.auditDb.db.exec(taskQuery, collName, collValues, actionType, actionBy, actionDate)
         
         # send response
         return getResMessage("success", ResponseMessage(value: collParams, message: getCurrentExceptionMsg()))
@@ -69,8 +70,9 @@ proc updateLog*(log: LogParam; coll: string; collParams: JsonNode; userId: strin
             actionDate = now().utc
 
         # store action record
-        log.auditDb.db.exec(sql("INSERT INTO" & log.auditColl & "(collName, collValues, actionType, actionBy, actionDate ) VALUES (?, ?, ?, ?, ?);"),
-        collName, collValues, actionType, actionBy, actionDate)
+        var taskQuery = sql("INSERT INTO" & log.auditColl & "(collName, collValues, actionType, actionBy, actionDate ) VALUES (?, ?, ?, ?, ?);")
+
+        log.auditDb.db.exec(taskQuery, collName, collValues, actionType, actionBy, actionDate)
         
         # send response
         return getResMessage("success", ResponseMessage(value: collParams, message: getCurrentExceptionMsg()))
@@ -89,8 +91,9 @@ proc readLog*(log: LogParam; coll: string; collParams: JsonNode; userId: string 
             actionDate = now().utc
 
         # store action record
-        log.auditDb.db.exec(sql("INSERT INTO" & log.auditColl & "(collName, collValues, actionType, actionBy, actionDate ) VALUES (?, ?, ?, ?, ?);"),
-        collName, collValues, actionType, actionBy, actionDate)
+        var taskQuery = sql("INSERT INTO" & log.auditColl & "(collName, collValues, actionType, actionBy, actionDate ) VALUES (?, ?, ?, ?, ?);")
+
+        log.auditDb.db.exec(taskQuery, collName, collValues, actionType, actionBy, actionDate)
         
         # send response
         return getResMessage("success", ResponseMessage(value: collParams, message: getCurrentExceptionMsg()))
@@ -109,8 +112,9 @@ proc deleteLog*(log: LogParam; coll: string; collParams: JsonNode; userId: strin
             actionDate = now().utc
 
         # store action record
-        log.auditDb.db.exec(sql("INSERT INTO" & log.auditColl & "(collName, collValues, actionType, actionBy, actionDate ) VALUES (?, ?, ?, ?, ?);"),
-        collName, collValues, actionType, actionBy, actionDate)
+        var taskQuery = sql("INSERT INTO" & log.auditColl & "(collName, collValues, actionType, actionBy, actionDate ) VALUES (?, ?, ?, ?, ?);")
+
+        log.auditDb.db.exec(taskQuery, collName, collValues, actionType, actionBy, actionDate)
         
         # send response
         return getResMessage("success", ResponseMessage(value: collParams, message: getCurrentExceptionMsg()))
@@ -129,8 +133,9 @@ proc loginLog*(log: LogParam; coll: string; collParams: JsonNode; userId: string
             actionDate = now().utc
 
         # store action record
-        log.auditDb.db.exec(sql("INSERT INTO" & log.auditColl & "(collName, collValues, actionType, actionBy, actionDate ) VALUES (?, ?, ?, ?, ?);"),
-        collName, collValues, actionType, actionBy, actionDate)
+        var taskQuery = sql("INSERT INTO" & log.auditColl & "(collName, collValues, actionType, actionBy, actionDate ) VALUES (?, ?, ?, ?, ?);")
+
+        log.auditDb.db.exec(taskQuery, collName, collValues, actionType, actionBy, actionDate)
         
         # send response
         return getResMessage("success", ResponseMessage(value: collParams, message: getCurrentExceptionMsg()))
@@ -149,8 +154,9 @@ proc logoutLog*(log: LogParam; coll: string; collParams: JsonNode; userId: strin
             actionDate = now().utc
 
         # store action record
-        log.auditDb.db.exec(sql("INSERT INTO" & log.auditColl & "(collName, collValues, actionType, actionBy, actionDate ) VALUES (?, ?, ?, ?, ?);"),
-        collName, collValues, actionType, actionBy, actionDate)
+        var taskQuery = sql("INSERT INTO" & log.auditColl & "(collName, collValues, actionType, actionBy, actionDate ) VALUES (?, ?, ?, ?, ?);")
+
+        log.auditDb.db.exec(taskQuery, collName, collValues, actionType, actionBy, actionDate)
         
         # send response
         return getResMessage("success", ResponseMessage(value: collParams, message: getCurrentExceptionMsg()))
@@ -169,8 +175,9 @@ proc auditLog*(log: LogParam; coll: string; collParams: JsonNode; userId: string
             actionDate = now().utc
 
         # store action record
-        log.auditDb.db.exec(sql("INSERT INTO" & log.auditColl & "(collName, collValues, actionType, actionBy, actionDate ) VALUES (?, ?, ?, ?, ?);"),
-        collName, collValues, actionType, actionBy, actionDate)
+        var taskQuery = sql("INSERT INTO" & log.auditColl & "(collName, collValues, actionType, actionBy, actionDate ) VALUES (?, ?, ?, ?, ?);")
+
+        log.auditDb.db.exec(taskQuery, collName, collValues, actionType, actionBy, actionDate)
         
         # send response
         return getResMessage("success", ResponseMessage(value: collParams, message: getCurrentExceptionMsg()))
