@@ -48,6 +48,18 @@ proc createLog*(log: LogParam; coll: string; collParams: JsonNode; userId: strin
             actionBy = userId
             actionDate = now().utc
 
+        # validate params
+        var errorMessage = ""
+        if collName == "":
+            errorMessage = errorMessage & " | Table or Collection name is required."
+        if actionBy == "":
+            errorMessage = errorMessage & " | UserID is required."
+        if collValues == nil:
+            errorMessage = errorMessage & " | Created record(s) information is required."        
+
+        if errorMessage != "":
+            raise newException(ValueError, errorMessage)
+
         # store action record
         var taskQuery = sql("INSERT INTO" & log.auditColl & "(collName, collValues, actionType, actionBy, actionDate ) VALUES (?, ?, ?, ?, ?);")
 
@@ -68,6 +80,18 @@ proc updateLog*(log: LogParam; coll: string; collParams: JsonNode; userId: strin
             actionType = "create"
             actionBy = userId
             actionDate = now().utc
+
+        # validate params
+        var errorMessage = ""
+        if collName == "":
+            errorMessage = errorMessage & " | Table or Collection name is required."
+        if actionBy == "":
+            errorMessage = errorMessage & " | UserID is required."
+        if collValues == nil:
+            errorMessage = errorMessage & " | Created record(s) information is required."        
+
+        if errorMessage != "":
+            raise newException(ValueError, errorMessage)
 
         # store action record
         var taskQuery = sql("INSERT INTO" & log.auditColl & "(collName, collValues, actionType, actionBy, actionDate ) VALUES (?, ?, ?, ?, ?);")
@@ -90,6 +114,18 @@ proc readLog*(log: LogParam; coll: string; collParams: JsonNode; userId: string 
             actionBy = userId
             actionDate = now().utc
 
+        # validate params
+        var errorMessage = ""
+        if collName == "":
+            errorMessage = errorMessage & " | Table or Collection name is required."
+        if actionBy == "":
+            errorMessage = errorMessage & " | UserID is required."
+        if collValues == nil:
+            errorMessage = errorMessage & " | Created record(s) information is required."        
+
+        if errorMessage != "":
+            raise newException(ValueError, errorMessage)
+
         # store action record
         var taskQuery = sql("INSERT INTO" & log.auditColl & "(collName, collValues, actionType, actionBy, actionDate ) VALUES (?, ?, ?, ?, ?);")
 
@@ -110,6 +146,18 @@ proc deleteLog*(log: LogParam; coll: string; collParams: JsonNode; userId: strin
             actionType = "create"
             actionBy = userId
             actionDate = now().utc
+
+        # validate params
+        var errorMessage = ""
+        if collName == "":
+            errorMessage = errorMessage & " | Table or Collection name is required."
+        if actionBy == "":
+            errorMessage = errorMessage & " | UserID is required."
+        if collValues == nil:
+            errorMessage = errorMessage & " | Created record(s) information is required."        
+
+        if errorMessage != "":
+            raise newException(ValueError, errorMessage)
 
         # store action record
         var taskQuery = sql("INSERT INTO" & log.auditColl & "(collName, collValues, actionType, actionBy, actionDate ) VALUES (?, ?, ?, ?, ?);")
@@ -132,6 +180,18 @@ proc loginLog*(log: LogParam; coll: string; collParams: JsonNode; userId: string
             actionBy = userId
             actionDate = now().utc
 
+        # validate params
+        var errorMessage = ""
+        if collName == "":
+            errorMessage = errorMessage & " | Table or Collection name is required."
+        if actionBy == "":
+            errorMessage = errorMessage & " | UserID is required."
+        if collValues == nil:
+            errorMessage = errorMessage & " | Created record(s) information is required."        
+
+        if errorMessage != "":
+            raise newException(ValueError, errorMessage)
+
         # store action record
         var taskQuery = sql("INSERT INTO" & log.auditColl & "(collName, collValues, actionType, actionBy, actionDate ) VALUES (?, ?, ?, ?, ?);")
 
@@ -152,6 +212,18 @@ proc logoutLog*(log: LogParam; coll: string; collParams: JsonNode; userId: strin
             actionType = "create"
             actionBy = userId
             actionDate = now().utc
+        
+        # validate params
+        var errorMessage = ""
+        if collName == "":
+            errorMessage = errorMessage & " | Table or Collection name is required."
+        if actionBy == "":
+            errorMessage = errorMessage & " | UserID is required."
+        if collValues == nil:
+            errorMessage = errorMessage & " | Created record(s) information is required."        
+
+        if errorMessage != "":
+            raise newException(ValueError, errorMessage)
 
         # store action record
         var taskQuery = sql("INSERT INTO" & log.auditColl & "(collName, collValues, actionType, actionBy, actionDate ) VALUES (?, ?, ?, ?, ?);")
@@ -173,6 +245,18 @@ proc auditLog*(log: LogParam; coll: string; collParams: JsonNode; userId: string
             actionType = "create"
             actionBy = userId
             actionDate = now().utc
+
+        # validate params
+        var errorMessage = ""
+        if collName == "":
+            errorMessage = errorMessage & " | Table or Collection name is required."
+        if actionBy == "":
+            errorMessage = errorMessage & " | UserID is required."
+        if collValues == nil:
+            errorMessage = errorMessage & " | Created record(s) information is required."        
+
+        if errorMessage != "":
+            raise newException(ValueError, errorMessage)
 
         # store action record
         var taskQuery = sql("INSERT INTO" & log.auditColl & "(collName, collValues, actionType, actionBy, actionDate ) VALUES (?, ?, ?, ?, ?);")
