@@ -50,6 +50,7 @@ proc createLog*(log: LogParam; coll: string; collParams: JsonNode; userId: strin
 
         # validate params
         var errorMessage = ""
+        
         if collName == "":
             errorMessage = errorMessage & " | Table or Collection name is required."
         if actionBy == "":
