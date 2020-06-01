@@ -76,13 +76,14 @@ proc createLog*(log: LogParam; coll: string; collParams: JsonNode; userId: strin
     except:
         return getResMessage("insertError", ResponseMessage(value: nil, message: getCurrentExceptionMsg()))
 
-proc updateLog*(log: LogParam; coll: string; collParams: JsonNode; userId: string ): ResponseMessage =
+proc updateLog*(log: LogParam; coll: string; collParams: JsonNode; collNewParams: JsonNode; userId: string ): ResponseMessage =
     try:
         # log-params/values
         let
             collName = coll
             collValues = collParams
-            actionType = "create"
+            collNewValues = collNewParams
+            actionType = "update"
             actionBy = userId
             actionDate = now().utc
 
@@ -93,15 +94,17 @@ proc updateLog*(log: LogParam; coll: string; collParams: JsonNode; userId: strin
         if actionBy == "":
             errorMessage = errorMessage & " | UserID is required."
         if collValues == nil:
-            errorMessage = errorMessage & " | Created record(s) information is required."        
+            errorMessage = errorMessage & " | Old/existing record(s) information is required."        
+        if collNewValues == nil:
+            errorMessage = errorMessage & " | Updated/new record(s) information is required."        
 
         if errorMessage != "":
             raise newException(ValueError, errorMessage)
 
         # store action record
-        var taskQuery = sql("INSERT INTO " & log.auditColl & " (collName, collValues, actionType, actionBy, actionDate ) VALUES (?, ?, ?, ?, ?);")
+        var taskQuery = sql("INSERT INTO " & log.auditColl & " (collName, collValues, collNewValues, actionType, actionBy, actionDate ) VALUES (?, ?, ?, ?, ?);")
 
-        log.auditDb.db.exec(taskQuery, collName, collValues, actionType, actionBy, actionDate)
+        log.auditDb.db.exec(taskQuery, collName, collValues, collNewValues, actionType, actionBy, actionDate)
         
         # send response
         return getResMessage("success", ResponseMessage(value: collParams, message: getCurrentExceptionMsg()))
@@ -115,7 +118,7 @@ proc readLog*(log: LogParam; coll: string; collParams: JsonNode; userId: string 
         let
             collName = coll
             collValues = collParams
-            actionType = "create"
+            actionType = "read"
             actionBy = userId
             actionDate = now().utc
 
@@ -148,7 +151,7 @@ proc deleteLog*(log: LogParam; coll: string; collParams: JsonNode; userId: strin
         let
             collName = coll
             collValues = collParams
-            actionType = "create"
+            actionType = "remove"
             actionBy = userId
             actionDate = now().utc
 
@@ -181,7 +184,7 @@ proc loginLog*(log: LogParam; coll: string; collParams: JsonNode; userId: string
         let
             collName = coll
             collValues = collParams
-            actionType = "create"
+            actionType = "login"
             actionBy = userId
             actionDate = now().utc
 
@@ -214,7 +217,7 @@ proc logoutLog*(log: LogParam; coll: string; collParams: JsonNode; userId: strin
         let
             collName = coll
             collValues = collParams
-            actionType = "create"
+            actionType = "logout"
             actionBy = userId
             actionDate = now().utc
         
