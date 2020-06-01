@@ -14,7 +14,7 @@
 ## 
 
 # types
-import db_postgres, json, tables, times
+import db_postgres, json, tables, times, strutils
 import mcresponse
 
 # Define types
@@ -178,12 +178,12 @@ proc deleteLog*(log: LogParam; coll: string; collParams: JsonNode; userId: strin
     except:
         return getResMessage("insertError", ResponseMessage(value: nil, message: getCurrentExceptionMsg()))
 
-proc loginLog*(log: LogParam; coll: string; collParams: JsonNode; userId: string ): ResponseMessage =
+proc loginLog*(log: LogParam; coll: string = "users"; loginParams: JsonNode; userId: string ): ResponseMessage =
     try:
         # log-params/values
         let
             collName = coll
-            collValues = collParams
+            collValues = loginParams
             actionType = "login"
             actionBy = userId
             actionDate = now().utc
@@ -206,17 +206,17 @@ proc loginLog*(log: LogParam; coll: string; collParams: JsonNode; userId: string
         log.auditDb.db.exec(taskQuery, collName, collValues, actionType, actionBy, actionDate)
         
         # send response
-        return getResMessage("success", ResponseMessage(value: collParams, message: getCurrentExceptionMsg()))
+        return getResMessage("success", ResponseMessage(value: nil, message: getCurrentExceptionMsg()))
     
     except:
         return getResMessage("insertError", ResponseMessage(value: nil, message: getCurrentExceptionMsg()))
 
-proc logoutLog*(log: LogParam; coll: string; collParams: JsonNode; userId: string ): ResponseMessage =
+proc logoutLog*(log: LogParam; coll: string = "users"; logoutParams: JsonNode; userId: string ): ResponseMessage =
     try:
         # log-params/values
         let
             collName = coll
-            collValues = collParams
+            collValues = logoutParams
             actionType = "logout"
             actionBy = userId
             actionDate = now().utc
@@ -239,40 +239,7 @@ proc logoutLog*(log: LogParam; coll: string; collParams: JsonNode; userId: strin
         log.auditDb.db.exec(taskQuery, collName, collValues, actionType, actionBy, actionDate)
         
         # send response
-        return getResMessage("success", ResponseMessage(value: collParams, message: getCurrentExceptionMsg()))
-    
-    except:
-        return getResMessage("insertError", ResponseMessage(value: nil, message: getCurrentExceptionMsg()))
-
-proc auditLog*(log: LogParam; coll: string; collParams: JsonNode; userId: string ): ResponseMessage =
-    try:
-        # log-params/values
-        let
-            collName = coll
-            collValues = collParams
-            actionType = "create"
-            actionBy = userId
-            actionDate = now().utc
-
-        # validate params
-        var errorMessage = ""
-        if collName == "":
-            errorMessage = errorMessage & " | Table or Collection name is required."
-        if actionBy == "":
-            errorMessage = errorMessage & " | UserID is required."
-        if collValues == nil:
-            errorMessage = errorMessage & " | Created record(s) information is required."        
-
-        if errorMessage != "":
-            raise newException(ValueError, errorMessage)
-
-        # store action record
-        var taskQuery = sql("INSERT INTO " & log.auditColl & " (collName, collValues, actionType, actionBy, actionDate ) VALUES (?, ?, ?, ?, ?);")
-
-        log.auditDb.db.exec(taskQuery, collName, collValues, actionType, actionBy, actionDate)
-        
-        # send response
-        return getResMessage("success", ResponseMessage(value: collParams, message: getCurrentExceptionMsg()))
+        return getResMessage("success", ResponseMessage(value: nil, message: getCurrentExceptionMsg()))
     
     except:
         return getResMessage("insertError", ResponseMessage(value: nil, message: getCurrentExceptionMsg()))
