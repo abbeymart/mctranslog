@@ -13,4 +13,4 @@ skipFiles     = @["project.md"]
 
 requires "nim >= 1.2.0"
 requires "mcresponse >= 0.1.0"
-requires "mcdb >= 0.1.1"
+requires "mcdb >= 0.1.2"
