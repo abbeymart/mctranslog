@@ -46,7 +46,7 @@ proc createLog*(log: LogParam; coll: string; collParams: JsonNode; userId: strin
         if collName == "":
             errorMessage = errorMessage & " | Table or Collection name is required."
         if logBy == "":
-            errorMessage = errorMessage & " | UserID is required."
+            errorMessage = errorMessage & " | userId is required."
         if collValues == nil:
             errorMessage = errorMessage & " | Created record(s) information is required."        
 
@@ -62,7 +62,7 @@ proc createLog*(log: LogParam; coll: string; collParams: JsonNode; userId: strin
         return getResMessage("success", ResponseMessage(value: collParams, message: "successful create-log action"))
     
     except:
-        echo getCurrentExceptionMsg()
+        # echo getCurrentExceptionMsg()
         return getResMessage("insertError", ResponseMessage(value: nil, message: getCurrentExceptionMsg()))
 
 proc updateLog*(log: LogParam; coll: string; collParams: JsonNode; collNewParams: JsonNode; userId: string ): ResponseMessage =
@@ -81,7 +81,7 @@ proc updateLog*(log: LogParam; coll: string; collParams: JsonNode; collNewParams
         if collName == "":
             errorMessage = errorMessage & " | Table or Collection name is required."
         if logBy == "":
-            errorMessage = errorMessage & " | UserID is required."
+            errorMessage = errorMessage & " | userId is required."
         if collValues == nil:
             errorMessage = errorMessage & " | Old/existing record(s) information is required."        
         if collNewValues == nil:
@@ -91,7 +91,7 @@ proc updateLog*(log: LogParam; coll: string; collParams: JsonNode; collNewParams
             raise newException(ValueError, errorMessage)
 
         # store action record
-        var taskQuery = sql("INSERT INTO " & log.auditColl & " (coll_name, coll_values, coll_new_values, log_type, log_by, log_date ) VALUES (?, ?, ?, ?, ?);")
+        var taskQuery = sql("INSERT INTO " & log.auditColl & " (coll_name, coll_values, coll_new_values, log_type, log_by, log_date ) VALUES (?, ?, ?, ?, ?, ?);")
 
         log.auditDb.db.exec(taskQuery, collName, collValues, collNewValues, logType, logBy, logDate)
         
@@ -99,7 +99,7 @@ proc updateLog*(log: LogParam; coll: string; collParams: JsonNode; collNewParams
         return getResMessage("success", ResponseMessage(value: collNewParams, message: "successful update-log action"))
     
     except:
-        echo getCurrentExceptionMsg()
+        # echo getCurrentExceptionMsg()
         return getResMessage("insertError", ResponseMessage(value: nil, message: getCurrentExceptionMsg()))
 
 proc readLog*(log: LogParam; coll: string; collParams: JsonNode; userId: string ): ResponseMessage =
@@ -117,7 +117,7 @@ proc readLog*(log: LogParam; coll: string; collParams: JsonNode; userId: string 
         if collName == "":
             errorMessage = errorMessage & " | Table or Collection name is required."
         if logBy == "":
-            errorMessage = errorMessage & " | UserID is required."
+            errorMessage = errorMessage & " | userId is required."
         if collValues == nil:
             errorMessage = errorMessage & " | Created record(s) information is required."        
 
@@ -150,7 +150,7 @@ proc deleteLog*(log: LogParam; coll: string; collParams: JsonNode; userId: strin
         if collName == "":
             errorMessage = errorMessage & " | Table or Collection name is required."
         if logBy == "":
-            errorMessage = errorMessage & " | UserID is required."
+            errorMessage = errorMessage & " | userId is required."
         if collValues == nil:
             errorMessage = errorMessage & " | Created record(s) information is required."        
 
@@ -183,7 +183,7 @@ proc loginLog*(log: LogParam; coll: string = "users"; loginParams: JsonNode; use
         if collName == "":
             errorMessage = errorMessage & " | Table or Collection name is required."
         if logBy == "":
-            errorMessage = errorMessage & " | UserID is required."
+            errorMessage = errorMessage & " | userId is required."
         if collValues == nil:
             errorMessage = errorMessage & " | Created record(s) information is required."        
 
@@ -216,7 +216,7 @@ proc logoutLog*(log: LogParam; coll: string = "users"; logoutParams: JsonNode; u
         if collName == "":
             errorMessage = errorMessage & " | Table or Collection name is required."
         if logBy == "":
-            errorMessage = errorMessage & " | UserID is required."
+            errorMessage = errorMessage & " | userId is required."
         if collValues == nil:
             errorMessage = errorMessage & " | Created record(s) information is required."        
 
@@ -232,5 +232,5 @@ proc logoutLog*(log: LogParam; coll: string = "users"; logoutParams: JsonNode; u
         return getResMessage("success", ResponseMessage(value: nil, message: "successful logout-log action"))
     
     except:
-        echo getCurrentExceptionMsg()
+        # echo getCurrentExceptionMsg()
         return getResMessage("insertError", ResponseMessage(value: nil, message: getCurrentExceptionMsg()))

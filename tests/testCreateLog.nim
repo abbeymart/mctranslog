@@ -59,22 +59,17 @@ test "should connect and return an instance object":
     check mcLog == logInstanceResult
 
 test "should store create-transaction log and return success":
-    try:
-        var res = mcLog.createLog(collName, collParams, userId)
-        echo "create-log-response: ", res
-        check res.code == "success"
-        check res.value == collParams
-    except:
-        echo getCurrentExceptionMsg()
+    var res = mcLog.createLog(collName, collParams, userId)
+    echo "create-log-response: ", res
+    check res.code == "success"
+    check res.value == collParams
+ 
 
 test "should store update-transaction log and return success":
-    try:
-        var res = mcLog.updateLog(collName, collParams, collNewParams, userId)
-        echo "update-log-response: ", res
-        check res.code == "success"
-        check res.value == collNewParams
-    except:
-        echo getCurrentExceptionMsg()
+    var res = mcLog.updateLog(collName, collParams, collNewParams, userId)
+    echo "update-log-response: ", res
+    check res.code == "success"
+    check res.value == collNewParams
 
 test "should store read-transaction log and return success":
     var res = mcLog.readLog(collName, collParams, userId)
