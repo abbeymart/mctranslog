@@ -14,50 +14,38 @@
 ## 
 
 # types
-import db_postgres, json, tables, times, strutils
+import db_postgres, json, times
 import mcresponse
+import mcdb
 
 # Define types
 type
-    Database = ref object
-        db: DbConn
-         
-    ValueType = int | string | float | bool | Positive | Natural | JsonNode | BiggestInt | BiggestFloat | Table | seq | SqlQuery | Database
-
-    LogParam = ref object
-        auditDb: Database
+    LogParam* = object
+        auditDb*: Database
         auditColl*: string
-        maxQueryLimit: Positive
-        mcMessages*: Table[string, string]
-
-
-# Initialise cache table/object
-var defaultOptions = initTable[string, JsonNode]()
 
 # contructor
-proc newLog*(auditDb: Database; options: Table[string, ValueType] = defaultOptions): LogParam =
-    var defaultMessageTable = initTable[string, string]()
-    new result
+proc newLog*(auditDb: Database; auditColl: string = "audits"): LogParam =
+    # new result
     result.auditDb = auditDb
-    result.auditColl = options.getOrDefault("auditColl", "audits")
-    result.mcMessages = options.getOrDefault("messages", defaultMessageTable)
-
+    result.auditColl = auditColl
+ 
 proc createLog*(log: LogParam; coll: string; collParams: JsonNode; userId: string ): ResponseMessage =
     try:
         # log-params/values
         let
             collName = coll
             collValues = collParams
-            actionType = "create"
-            actionBy = userId
-            actionDate = now().utc
+            logType = "create"
+            logBy = userId
+            logDate = now().utc
 
         # validate params/values
         var errorMessage = ""
         
         if collName == "":
             errorMessage = errorMessage & " | Table or Collection name is required."
-        if actionBy == "":
+        if logBy == "":
             errorMessage = errorMessage & " | UserID is required."
         if collValues == nil:
             errorMessage = errorMessage & " | Created record(s) information is required."        
@@ -66,14 +54,15 @@ proc createLog*(log: LogParam; coll: string; collParams: JsonNode; userId: strin
             raise newException(ValueError, errorMessage)
 
         # store action record
-        var taskQuery = sql("INSERT INTO " & log.auditColl & " (collName, collValues, actionType, actionBy, actionDate ) VALUES (?, ?, ?, ?, ?);")
+        var taskQuery = sql("INSERT INTO " & log.auditColl & " (coll_name, coll_values, log_type, log_by, log_date ) VALUES (?, ?, ?, ?, ?);")
 
-        log.auditDb.db.exec(taskQuery, collName, collValues, actionType, actionBy, actionDate)
+        log.auditDb.db.exec(taskQuery, collName, collValues, logType, logBy, logDate)
         
         # send response
-        return getResMessage("success", ResponseMessage(value: collParams, message: getCurrentExceptionMsg()))
+        return getResMessage("success", ResponseMessage(value: collParams, message: "successful create-log action"))
     
     except:
+        echo getCurrentExceptionMsg()
         return getResMessage("insertError", ResponseMessage(value: nil, message: getCurrentExceptionMsg()))
 
 proc updateLog*(log: LogParam; coll: string; collParams: JsonNode; collNewParams: JsonNode; userId: string ): ResponseMessage =
@@ -83,15 +72,15 @@ proc updateLog*(log: LogParam; coll: string; collParams: JsonNode; collNewParams
             collName = coll
             collValues = collParams
             collNewValues = collNewParams
-            actionType = "update"
-            actionBy = userId
-            actionDate = now().utc
+            logType = "update"
+            logBy = userId
+            logDate = now().utc
 
         # validate params
         var errorMessage = ""
         if collName == "":
             errorMessage = errorMessage & " | Table or Collection name is required."
-        if actionBy == "":
+        if logBy == "":
             errorMessage = errorMessage & " | UserID is required."
         if collValues == nil:
             errorMessage = errorMessage & " | Old/existing record(s) information is required."        
@@ -102,12 +91,12 @@ proc updateLog*(log: LogParam; coll: string; collParams: JsonNode; collNewParams
             raise newException(ValueError, errorMessage)
 
         # store action record
-        var taskQuery = sql("INSERT INTO " & log.auditColl & " (collName, collValues, collNewValues, actionType, actionBy, actionDate ) VALUES (?, ?, ?, ?, ?);")
+        var taskQuery = sql("INSERT INTO " & log.auditColl & " (collName, collValues, collNewValues, logType, logBy, logDate ) VALUES (?, ?, ?, ?, ?);")
 
-        log.auditDb.db.exec(taskQuery, collName, collValues, collNewValues, actionType, actionBy, actionDate)
+        log.auditDb.db.exec(taskQuery, collName, collValues, collNewValues, logType, logBy, logDate)
         
         # send response
-        return getResMessage("success", ResponseMessage(value: collParams, message: getCurrentExceptionMsg()))
+        return getResMessage("success", ResponseMessage(value: collNewParams, message: "successful update-log action"))
     
     except:
         return getResMessage("insertError", ResponseMessage(value: nil, message: getCurrentExceptionMsg()))
@@ -118,15 +107,15 @@ proc readLog*(log: LogParam; coll: string; collParams: JsonNode; userId: string 
         let
             collName = coll
             collValues = collParams
-            actionType = "read"
-            actionBy = userId
-            actionDate = now().utc
+            logType = "read"
+            logBy = userId
+            logDate = now().utc
 
         # validate params
         var errorMessage = ""
         if collName == "":
             errorMessage = errorMessage & " | Table or Collection name is required."
-        if actionBy == "":
+        if logBy == "":
             errorMessage = errorMessage & " | UserID is required."
         if collValues == nil:
             errorMessage = errorMessage & " | Created record(s) information is required."        
@@ -135,12 +124,12 @@ proc readLog*(log: LogParam; coll: string; collParams: JsonNode; userId: string 
             raise newException(ValueError, errorMessage)
 
         # store action record
-        var taskQuery = sql("INSERT INTO " & log.auditColl & " (collName, collValues, actionType, actionBy, actionDate ) VALUES (?, ?, ?, ?, ?);")
+        var taskQuery = sql("INSERT INTO " & log.auditColl & " (collName, collValues, logType, logBy, logDate ) VALUES (?, ?, ?, ?, ?);")
 
-        log.auditDb.db.exec(taskQuery, collName, collValues, actionType, actionBy, actionDate)
+        log.auditDb.db.exec(taskQuery, collName, collValues, logType, logBy, logDate)
         
         # send response
-        return getResMessage("success", ResponseMessage(value: collParams, message: getCurrentExceptionMsg()))
+        return getResMessage("success", ResponseMessage(value: collParams, message: "successful read-log action"))
     
     except:
         return getResMessage("insertError", ResponseMessage(value: nil, message: getCurrentExceptionMsg()))
@@ -151,15 +140,15 @@ proc deleteLog*(log: LogParam; coll: string; collParams: JsonNode; userId: strin
         let
             collName = coll
             collValues = collParams
-            actionType = "remove"
-            actionBy = userId
-            actionDate = now().utc
+            logType = "remove"
+            logBy = userId
+            logDate = now().utc
 
         # validate params
         var errorMessage = ""
         if collName == "":
             errorMessage = errorMessage & " | Table or Collection name is required."
-        if actionBy == "":
+        if logBy == "":
             errorMessage = errorMessage & " | UserID is required."
         if collValues == nil:
             errorMessage = errorMessage & " | Created record(s) information is required."        
@@ -168,12 +157,12 @@ proc deleteLog*(log: LogParam; coll: string; collParams: JsonNode; userId: strin
             raise newException(ValueError, errorMessage)
 
         # store action record
-        var taskQuery = sql("INSERT INTO " & log.auditColl & " (collName, collValues, actionType, actionBy, actionDate ) VALUES (?, ?, ?, ?, ?);")
+        var taskQuery = sql("INSERT INTO " & log.auditColl & " (collName, collValues, logType, logBy, logDate ) VALUES (?, ?, ?, ?, ?);")
 
-        log.auditDb.db.exec(taskQuery, collName, collValues, actionType, actionBy, actionDate)
+        log.auditDb.db.exec(taskQuery, collName, collValues, logType, logBy, logDate)
         
         # send response
-        return getResMessage("success", ResponseMessage(value: collParams, message: getCurrentExceptionMsg()))
+        return getResMessage("success", ResponseMessage(value: collParams, message: "successful remove-log action"))
     
     except:
         return getResMessage("insertError", ResponseMessage(value: nil, message: getCurrentExceptionMsg()))
@@ -184,15 +173,15 @@ proc loginLog*(log: LogParam; coll: string = "users"; loginParams: JsonNode; use
         let
             collName = coll
             collValues = loginParams
-            actionType = "login"
-            actionBy = userId
-            actionDate = now().utc
+            logType = "login"
+            logBy = userId
+            logDate = now().utc
 
         # validate params
         var errorMessage = ""
         if collName == "":
             errorMessage = errorMessage & " | Table or Collection name is required."
-        if actionBy == "":
+        if logBy == "":
             errorMessage = errorMessage & " | UserID is required."
         if collValues == nil:
             errorMessage = errorMessage & " | Created record(s) information is required."        
@@ -201,12 +190,12 @@ proc loginLog*(log: LogParam; coll: string = "users"; loginParams: JsonNode; use
             raise newException(ValueError, errorMessage)
 
         # store action record
-        var taskQuery = sql("INSERT INTO " & log.auditColl & " (collName, collValues, actionType, actionBy, actionDate ) VALUES (?, ?, ?, ?, ?);")
+        var taskQuery = sql("INSERT INTO " & log.auditColl & " (collName, collValues, logType, logBy, logDate ) VALUES (?, ?, ?, ?, ?);")
 
-        log.auditDb.db.exec(taskQuery, collName, collValues, actionType, actionBy, actionDate)
+        log.auditDb.db.exec(taskQuery, collName, collValues, logType, logBy, logDate)
         
         # send response
-        return getResMessage("success", ResponseMessage(value: nil, message: getCurrentExceptionMsg()))
+        return getResMessage("success", ResponseMessage(value: nil, message: "successful login-log action"))
     
     except:
         return getResMessage("insertError", ResponseMessage(value: nil, message: getCurrentExceptionMsg()))
@@ -217,15 +206,15 @@ proc logoutLog*(log: LogParam; coll: string = "users"; logoutParams: JsonNode; u
         let
             collName = coll
             collValues = logoutParams
-            actionType = "logout"
-            actionBy = userId
-            actionDate = now().utc
+            logType = "logout"
+            logBy = userId
+            logDate = now().utc
         
         # validate params
         var errorMessage = ""
         if collName == "":
             errorMessage = errorMessage & " | Table or Collection name is required."
-        if actionBy == "":
+        if logBy == "":
             errorMessage = errorMessage & " | UserID is required."
         if collValues == nil:
             errorMessage = errorMessage & " | Created record(s) information is required."        
@@ -234,12 +223,12 @@ proc logoutLog*(log: LogParam; coll: string = "users"; logoutParams: JsonNode; u
             raise newException(ValueError, errorMessage)
 
         # store action record
-        var taskQuery = sql("INSERT INTO " & log.auditColl & " (collName, collValues, actionType, actionBy, actionDate ) VALUES (?, ?, ?, ?, ?);")
+        var taskQuery = sql("INSERT INTO " & log.auditColl & " (collName, collValues, logType, logBy, logDate ) VALUES (?, ?, ?, ?, ?);")
 
-        log.auditDb.db.exec(taskQuery, collName, collValues, actionType, actionBy, actionDate)
+        log.auditDb.db.exec(taskQuery, collName, collValues, logType, logBy, logDate)
         
         # send response
-        return getResMessage("success", ResponseMessage(value: nil, message: getCurrentExceptionMsg()))
+        return getResMessage("success", ResponseMessage(value: nil, message: "successful logout-log action"))
     
     except:
         return getResMessage("insertError", ResponseMessage(value: nil, message: getCurrentExceptionMsg()))
