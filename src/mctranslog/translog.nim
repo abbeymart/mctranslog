@@ -99,6 +99,7 @@ proc updateLog*(log: LogParam; coll: string; collParams: JsonNode; collNewParams
         return getResMessage("success", ResponseMessage(value: collNewParams, message: "successful update-log action"))
     
     except:
+        echo getCurrentExceptionMsg()
         return getResMessage("insertError", ResponseMessage(value: nil, message: getCurrentExceptionMsg()))
 
 proc readLog*(log: LogParam; coll: string; collParams: JsonNode; userId: string ): ResponseMessage =
@@ -231,4 +232,5 @@ proc logoutLog*(log: LogParam; coll: string = "users"; logoutParams: JsonNode; u
         return getResMessage("success", ResponseMessage(value: nil, message: "successful logout-log action"))
     
     except:
+        echo getCurrentExceptionMsg()
         return getResMessage("insertError", ResponseMessage(value: nil, message: getCurrentExceptionMsg()))

@@ -68,10 +68,13 @@ test "should store create-transaction log and return success":
         echo getCurrentExceptionMsg()
 
 test "should store update-transaction log and return success":
-    var res = mcLog.updateLog(collName, collParams, collNewParams, userId)
-    # echo "update-log-response: ", res
-    check res.code == "success"
-    check res.value == collNewParams
+    try:
+        var res = mcLog.updateLog(collName, collParams, collNewParams, userId)
+        echo "update-log-response: ", res
+        check res.code == "success"
+        check res.value == collNewParams
+    except:
+        echo getCurrentExceptionMsg()
 
 test "should store read-transaction log and return success":
     var res = mcLog.readLog(collName, collParams, userId)
@@ -96,6 +99,10 @@ test "should store logout-transaction log and return success":
     check res.value == nil
 
 test "should return paramsError for incomplete/undefined inputs":
-    var res = mcLog.logoutLog(collName, logoutParams, "")
-    check res.code == "insertError"
-    check res.value == nil
+    try:
+        var res = mcLog.logoutLog(collName, logoutParams, "")
+        echo "paramsError-response: ", res
+        check res.code == "insertError"
+        check res.value == nil
+    except:
+        echo getCurrentExceptionMsg()
