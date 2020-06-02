@@ -8,7 +8,8 @@
 #             Transaction (Audit) Log Package
 #
 
-## This the entry point to the mctranslog package: in-memory simple and hash cache
+## This the entry point to the mctranslog package: 
+## Audit log for CRUD and access transactions/tasks
 ## 
 ## 
 
