@@ -54,7 +54,7 @@ proc createLog*(log: LogParam; coll: string; collParams: JsonNode; userId: strin
             raise newException(ValueError, errorMessage)
 
         # store action record
-        var taskQuery = sql("INSERT INTO " & log.auditColl & " (coll_name, coll_values, log_type, log_by, log_date ) VALUES (?, ?, ?, ?, ?);")
+        var taskQuery = sql("INSERT INTO " & log.auditColl & " (collname, collvalues, logtype, logby, logdate ) VALUES (?, ?, ?, ?, ?);")
 
         log.auditDb.db.exec(taskQuery, collName, collValues, logType, logBy, logDate)
         
@@ -91,7 +91,7 @@ proc updateLog*(log: LogParam; coll: string; collParams: JsonNode; collNewParams
             raise newException(ValueError, errorMessage)
 
         # store action record
-        var taskQuery = sql("INSERT INTO " & log.auditColl & " (coll_name, coll_values, coll_new_values, log_type, log_by, log_date ) VALUES (?, ?, ?, ?, ?, ?);")
+        var taskQuery = sql("INSERT INTO " & log.auditColl & " (collname, collvalues, collnewvalues, logtype, logby, logdate ) VALUES (?, ?, ?, ?, ?, ?);")
 
         log.auditDb.db.exec(taskQuery, collName, collValues, collNewValues, logType, logBy, logDate)
         
@@ -125,7 +125,7 @@ proc readLog*(log: LogParam; coll: string; collParams: JsonNode; userId: string 
             raise newException(ValueError, errorMessage)
 
         # store action record
-        var taskQuery = sql("INSERT INTO " & log.auditColl & " (coll_name, coll_values, log_type, log_by, log_date ) VALUES (?, ?, ?, ?, ?);")
+        var taskQuery = sql("INSERT INTO " & log.auditColl & " (collname, collvalues, logtype, logby, logdate ) VALUES (?, ?, ?, ?, ?);")
 
         log.auditDb.db.exec(taskQuery, collName, collValues, logType, logBy, logDate)
         
@@ -158,7 +158,7 @@ proc deleteLog*(log: LogParam; coll: string; collParams: JsonNode; userId: strin
             raise newException(ValueError, errorMessage)
 
         # store action record
-        var taskQuery = sql("INSERT INTO " & log.auditColl & " (coll_name, coll_values, log_type, log_by, log_date ) VALUES (?, ?, ?, ?, ?);")
+        var taskQuery = sql("INSERT INTO " & log.auditColl & " (collname, collvalues, logtype, logby, logdate ) VALUES (?, ?, ?, ?, ?);")
 
         log.auditDb.db.exec(taskQuery, collName, collValues, logType, logBy, logDate)
         
@@ -191,7 +191,7 @@ proc loginLog*(log: LogParam; coll: string = "users"; loginParams: JsonNode; use
             raise newException(ValueError, errorMessage)
 
         # store action record
-        var taskQuery = sql("INSERT INTO " & log.auditColl & " (coll_name, coll_values, log_type, log_by, log_date ) VALUES (?, ?, ?, ?, ?);")
+        var taskQuery = sql("INSERT INTO " & log.auditColl & " (collname, collvalues, logtype, logby, logdate ) VALUES (?, ?, ?, ?, ?);")
 
         log.auditDb.db.exec(taskQuery, collName, collValues, logType, logBy, logDate)
         
@@ -224,7 +224,7 @@ proc logoutLog*(log: LogParam; coll: string = "users"; logoutParams: JsonNode; u
             raise newException(ValueError, errorMessage)
 
         # store action record
-        var taskQuery = sql("INSERT INTO " & log.auditColl & " (coll_name, coll_values, log_type, log_by, log_date ) VALUES (?, ?, ?, ?, ?);")
+        var taskQuery = sql("INSERT INTO " & log.auditColl & " (collname, collvalues, logtype, logby, logdate ) VALUES (?, ?, ?, ?, ?);")
 
         log.auditDb.db.exec(taskQuery, collName, collValues, logType, logBy, logDate)
         

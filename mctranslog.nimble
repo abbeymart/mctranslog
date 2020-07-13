@@ -1,6 +1,6 @@
 # Package
 
-version       = "0.1.0"
+version       = "0.1.1"
 author        = "Abi Akindele [abbeymart]"
 description   = "mctranslog - Transaction Log Package"
 license       = "MIT"
@@ -13,4 +13,4 @@ skipFiles     = @["project.md"]
 
 requires "nim >= 1.2.0"
 requires "mcresponse >= 0.1.0"
-requires "mcdb >= 0.1.2"
+requires "mcdb >= 0.1.3"
