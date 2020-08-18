@@ -30,170 +30,174 @@ proc newLog*(auditDb: Database; auditColl: string = "audits"): LogParam =
     result.auditDb = auditDb
     result.auditColl = auditColl
  
-proc createLog*(log: LogParam; coll: string; collParams: JsonNode; userId: string ): ResponseMessage =
+proc createLog*(log: LogParam; table: string; recordParams: JsonNode; userId: string ): ResponseMessage =
     try:
         # log-params/values
         let
-            collName = coll
-            collValues = collParams
+            tableName = table
+            recordValues = recordParams
             logType = "create"
             logBy = userId
-            logDate = now().utc
+            logAt = now().utc
 
         # validate params/values
         var errorMessage = ""
         
-        if collName == "":
+        if tableName == "":
             errorMessage = errorMessage & " | Table or Collection name is required."
         if logBy == "":
             errorMessage = errorMessage & " | userId is required."
-        if collValues == nil:
+        if recordValues == nil:
             errorMessage = errorMessage & " | Created record(s) information is required."        
 
         if errorMessage != "":
             raise newException(ValueError, errorMessage)
 
+        # echo "params-passed"
         # store action record
-        var taskQuery = sql("INSERT INTO " & log.auditColl & " (collname, collvalues, logtype, logby, logdate ) VALUES (?, ?, ?, ?, ?);")
+        var taskQuery = sql("INSERT INTO " & log.auditColl & " (table_name, record_values, log_type, log_by, log_at ) VALUES (?, ?, ?, ?, ?);")
 
-        log.auditDb.db.exec(taskQuery, collName, collValues, logType, logBy, logDate)
+        # echo "run-query"
+        log.auditDb.db.exec(taskQuery, tableName, recordValues, logType, logBy, logAt)
         
         # send response
-        return getResMessage("success", ResponseMessage(value: collParams, message: "successful create-log action"))
+        return getResMessage("success", ResponseMessage(value: recordParams, message: "successful create-log action"))
     
     except:
+        # echo getCurrentException.repr
         # echo getCurrentExceptionMsg()
         return getResMessage("insertError", ResponseMessage(value: nil, message: getCurrentExceptionMsg()))
 
-proc updateLog*(log: LogParam; coll: string; collParams: JsonNode; collNewParams: JsonNode; userId: string ): ResponseMessage =
+proc updateLog*(log: LogParam; table: string; recordParams: JsonNode; recordNewParams: JsonNode; userId: string ): ResponseMessage =
     try:
         # log-params/values
         let
-            collName = coll
-            collValues = collParams
-            collNewValues = collNewParams
+            tableName = table
+            recordValues = recordParams
+            recordNewValues = recordNewParams
             logType = "update"
             logBy = userId
-            logDate = now().utc
+            logAt = now().utc
 
         # validate params
         var errorMessage = ""
-        if collName == "":
+        if tableName == "":
             errorMessage = errorMessage & " | Table or Collection name is required."
         if logBy == "":
             errorMessage = errorMessage & " | userId is required."
-        if collValues == nil:
+        if recordValues == nil:
             errorMessage = errorMessage & " | Old/existing record(s) information is required."        
-        if collNewValues == nil:
+        if recordNewValues == nil:
             errorMessage = errorMessage & " | Updated/new record(s) information is required."        
 
         if errorMessage != "":
             raise newException(ValueError, errorMessage)
 
         # store action record
-        var taskQuery = sql("INSERT INTO " & log.auditColl & " (collname, collvalues, collnewvalues, logtype, logby, logdate ) VALUES (?, ?, ?, ?, ?, ?);")
+        var taskQuery = sql("INSERT INTO " & log.auditColl & " (table_name, record_values, record_new_values, log_type, log_by, log_at ) VALUES (?, ?, ?, ?, ?, ?);")
 
-        log.auditDb.db.exec(taskQuery, collName, collValues, collNewValues, logType, logBy, logDate)
+        log.auditDb.db.exec(taskQuery, tableName, recordValues, recordNewValues, logType, logBy, logAt)
         
         # send response
-        return getResMessage("success", ResponseMessage(value: collNewParams, message: "successful update-log action"))
+        return getResMessage("success", ResponseMessage(value: recordNewParams, message: "successful update-log action"))
     
     except:
         # echo getCurrentExceptionMsg()
         return getResMessage("insertError", ResponseMessage(value: nil, message: getCurrentExceptionMsg()))
 
-proc readLog*(log: LogParam; coll: string; collParams: JsonNode; userId: string ): ResponseMessage =
+proc readLog*(log: LogParam; table: string; recordParams: JsonNode; userId: string ): ResponseMessage =
     try:
         # log-params/values
         let
-            collName = coll
-            collValues = collParams
+            tableName = table
+            recordValues = recordParams
             logType = "read"
             logBy = userId
-            logDate = now().utc
+            logAt = now().utc
 
         # validate params
         var errorMessage = ""
-        if collName == "":
+        if tableName == "":
             errorMessage = errorMessage & " | Table or Collection name is required."
         if logBy == "":
             errorMessage = errorMessage & " | userId is required."
-        if collValues == nil:
+        if recordValues == nil:
             errorMessage = errorMessage & " | Created record(s) information is required."        
 
         if errorMessage != "":
             raise newException(ValueError, errorMessage)
 
         # store action record
-        var taskQuery = sql("INSERT INTO " & log.auditColl & " (collname, collvalues, logtype, logby, logdate ) VALUES (?, ?, ?, ?, ?);")
+        var taskQuery = sql("INSERT INTO " & log.auditColl & " (table_name, record_values, log_type, log_by, log_at ) VALUES (?, ?, ?, ?, ?);")
 
-        log.auditDb.db.exec(taskQuery, collName, collValues, logType, logBy, logDate)
+        log.auditDb.db.exec(taskQuery, tableName, recordValues, logType, logBy, logAt)
         
         # send response
-        return getResMessage("success", ResponseMessage(value: collParams, message: "successful read-log action"))
+        return getResMessage("success", ResponseMessage(value: recordParams, message: "successful read-log action"))
     
     except:
+        echo getCurrentException.repr
         return getResMessage("insertError", ResponseMessage(value: nil, message: getCurrentExceptionMsg()))
 
-proc deleteLog*(log: LogParam; coll: string; collParams: JsonNode; userId: string ): ResponseMessage =
+proc deleteLog*(log: LogParam; table: string; recordParams: JsonNode; userId: string ): ResponseMessage =
     try:
         # log-params/values
         let
-            collName = coll
-            collValues = collParams
+            tableName = table
+            recordValues = recordParams
             logType = "remove"
             logBy = userId
-            logDate = now().utc
+            logAt = now().utc
 
         # validate params
         var errorMessage = ""
-        if collName == "":
+        if tableName == "":
             errorMessage = errorMessage & " | Table or Collection name is required."
         if logBy == "":
             errorMessage = errorMessage & " | userId is required."
-        if collValues == nil:
+        if recordValues == nil:
             errorMessage = errorMessage & " | Created record(s) information is required."        
 
         if errorMessage != "":
             raise newException(ValueError, errorMessage)
 
         # store action record
-        var taskQuery = sql("INSERT INTO " & log.auditColl & " (collname, collvalues, logtype, logby, logdate ) VALUES (?, ?, ?, ?, ?);")
+        var taskQuery = sql("INSERT INTO " & log.auditColl & " (table_name, record_values, log_type, log_by, log_at ) VALUES (?, ?, ?, ?, ?);")
 
-        log.auditDb.db.exec(taskQuery, collName, collValues, logType, logBy, logDate)
+        log.auditDb.db.exec(taskQuery, tableName, recordValues, logType, logBy, logAt)
         
         # send response
-        return getResMessage("success", ResponseMessage(value: collParams, message: "successful remove-log action"))
+        return getResMessage("success", ResponseMessage(value: recordParams, message: "successful remove-log action"))
     
     except:
         return getResMessage("insertError", ResponseMessage(value: nil, message: getCurrentExceptionMsg()))
 
-proc loginLog*(log: LogParam; coll: string = "users"; loginParams: JsonNode; userId: string ): ResponseMessage =
+proc loginLog*(log: LogParam; table: string = "users"; loginParams: JsonNode; userId: string ): ResponseMessage =
     try:
         # log-params/values
         let
-            collName = coll
-            collValues = loginParams
+            tableName = table
+            recordValues = loginParams
             logType = "login"
             logBy = userId
-            logDate = now().utc
+            logAt = now().utc
 
         # validate params
         var errorMessage = ""
-        if collName == "":
+        if tableName == "":
             errorMessage = errorMessage & " | Table or Collection name is required."
         if logBy == "":
             errorMessage = errorMessage & " | userId is required."
-        if collValues == nil:
+        if recordValues == nil:
             errorMessage = errorMessage & " | Created record(s) information is required."        
 
         if errorMessage != "":
             raise newException(ValueError, errorMessage)
 
         # store action record
-        var taskQuery = sql("INSERT INTO " & log.auditColl & " (collname, collvalues, logtype, logby, logdate ) VALUES (?, ?, ?, ?, ?);")
+        var taskQuery = sql("INSERT INTO " & log.auditColl & " (table_name, record_values, log_type, log_by, log_at ) VALUES (?, ?, ?, ?, ?);")
 
-        log.auditDb.db.exec(taskQuery, collName, collValues, logType, logBy, logDate)
+        log.auditDb.db.exec(taskQuery, tableName, recordValues, logType, logBy, logAt)
         
         # send response
         return getResMessage("success", ResponseMessage(value: nil, message: "successful login-log action"))
@@ -201,32 +205,32 @@ proc loginLog*(log: LogParam; coll: string = "users"; loginParams: JsonNode; use
     except:
         return getResMessage("insertError", ResponseMessage(value: nil, message: getCurrentExceptionMsg()))
 
-proc logoutLog*(log: LogParam; coll: string = "users"; logoutParams: JsonNode; userId: string ): ResponseMessage =
+proc logoutLog*(log: LogParam; table: string = "users"; logoutParams: JsonNode; userId: string ): ResponseMessage =
     try:
         # log-params/values
         let
-            collName = coll
-            collValues = logoutParams
+            tableName = table
+            recordValues = logoutParams
             logType = "logout"
             logBy = userId
-            logDate = now().utc
+            logAt = now().utc
         
         # validate params
         var errorMessage = ""
-        if collName == "":
+        if tableName == "":
             errorMessage = errorMessage & " | Table or Collection name is required."
         if logBy == "":
             errorMessage = errorMessage & " | userId is required."
-        if collValues == nil:
+        if recordValues == nil:
             errorMessage = errorMessage & " | Created record(s) information is required."        
 
         if errorMessage != "":
             raise newException(ValueError, errorMessage)
 
         # store action record
-        var taskQuery = sql("INSERT INTO " & log.auditColl & " (collname, collvalues, logtype, logby, logdate ) VALUES (?, ?, ?, ?, ?);")
+        var taskQuery = sql("INSERT INTO " & log.auditColl & " (table_name, record_values, log_type, log_by, log_at ) VALUES (?, ?, ?, ?, ?);")
 
-        log.auditDb.db.exec(taskQuery, collName, collValues, logType, logBy, logDate)
+        log.auditDb.db.exec(taskQuery, tableName, recordValues, logType, logBy, logAt)
         
         # send response
         return getResMessage("success", ResponseMessage(value: nil, message: "successful logout-log action"))
