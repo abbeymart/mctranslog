@@ -1,6 +1,6 @@
 # Package
 
-version       = "0.1.3"
+version       = "0.1.4"
 author        = "Abi Akindele [abbeymart]"
 description   = "mctranslog - Transaction Log Package"
 license       = "MIT"
